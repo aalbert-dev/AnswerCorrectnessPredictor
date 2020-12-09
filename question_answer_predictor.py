@@ -1,4 +1,5 @@
 import csv, sys, os, numpy, math, decimal, copy, random
+import lightgbm as lgb
 """
 @author     Arjun Albert, Henry Arvans 
 @email      arjunalbert@brandeis.edu, harvans5@brandeis.edu
@@ -12,7 +13,7 @@ Returns the csv file as a dictionary.
 """
 def get_raw_file(fname):
     with open(os.path.join(sys.path[0], fname),'r') as f:
-        data = {}; headers = []; count = 0; line_count_limit = 10000
+        data = {}; headers = []; count = 0; line_count_limit = 100
         for row in f:
             row = row.replace('\n', '')
             split_row = row.split(',')
@@ -42,18 +43,34 @@ def get_dataset():
             'example_test'  : get_raw_file('example_test.csv')}
 
 
-# questions = get_raw_file('questions.csv')
-# num_questions = len(questions['question_id'])
-# for i in range(0, num_questions):
-#     question_id = questions['question_id'][i]
-#     bundle_id = questions['bundle_id'][i]
-#     correct_answer = questions['correct_answer'][i]
-#     part = questions['part'][i]
-#     tags = questions['tags'][i]
-#     #print(question_id, bundle_id, correct_answer, part, tags)
-#     print(correct_answer)
-#     #input()
-print('loading data...')
+"""
+
+"""
+def get_row_features(row, train_data, feature_names):
+    return [train_data[feature_name][row] for feature_name in feature_names]
+
+
+"""
+
+"""
+def extract_features(train_data):
+    features = []; data_len = len(train_data['row_id'])
+    for i in range(0, data_len):
+        feature_names = ['user_id', 'content_id']
+        row_feature_values = get_row_features(i, train_data, feature_names)
+        features.append(row_feature_values)
+    return features
+
+
+"""
+
+"""
+def extract_labels(train_data):
+    data_len = len(train_data['row_id'])
+    return [train_data['answered_correctly'][i] for i in range(0, data_len)]
+
+
 training_data = get_raw_file('train.csv')
-print(training_data.keys())
-    
+features = extract_features(training_data)
+labels = extract_labels(training_data)
+print(labels)
